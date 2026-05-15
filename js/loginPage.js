@@ -1,5 +1,5 @@
 
-import { login } from "./login.js";
+import { login } from "./auth.js";
 export function LoginPage() {
     const appContainer = document.getElementById("app")
     appContainer.innerHTML = `<div id="login-page">
@@ -38,7 +38,6 @@ export function LoginPage() {
         }
         loginForm.addEventListener("submit", (event) => {
           event.preventDefault();
-          console.log("in");
             login();
         });
     
