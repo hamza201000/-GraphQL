@@ -6,7 +6,6 @@ export function drawPieChart(passed, failed) {
 
     const total = passed + failed;
 
-    // Guard: no data yet
     if (total === 0) {
         const msg = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         msg.setAttribute('x', '130');
@@ -16,7 +15,7 @@ export function drawPieChart(passed, failed) {
         msg.setAttribute('fill', '#888780');
         msg.textContent = 'No result data found';
         svg.appendChild(msg);
-        return;  // stop here, no math below
+        return; 
     }
 
 
@@ -48,7 +47,6 @@ export function drawPieChart(passed, failed) {
         ].join(' ');
     }
 
-    // Pass slice (0 → passRatio * 2π)
     const passEnd = passRatio * 2 * Math.PI;
     const passPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     passPath.setAttribute('d', slicePath(cx, cy, R, r, 0, passEnd));
@@ -56,7 +54,6 @@ export function drawPieChart(passed, failed) {
     passPath.setAttribute('opacity', '0.9');
     svg.appendChild(passPath);
 
-    // Fail slice
     if (failed > 0) {
         const failPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         failPath.setAttribute('d', slicePath(cx, cy, R, r, passEnd, 2 * Math.PI));
@@ -65,7 +62,6 @@ export function drawPieChart(passed, failed) {
         svg.appendChild(failPath);
     }
 
-    // Center text
     const pct = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     pct.setAttribute('x', cx); pct.setAttribute('y', cy - 6);
     pct.setAttribute('text-anchor', 'middle');
@@ -82,7 +78,6 @@ export function drawPieChart(passed, failed) {
     sub.textContent = 'pass rate';
     svg.appendChild(sub);
 
-    // Legend (right side)
     const legendX = 270;
     [
         { label: 'Passed', count: passed, color: PASS_COLOR },
