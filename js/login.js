@@ -1,85 +1,67 @@
+import { showError } from "./Error.js";
+import { loadProfile } from "./profile.js";
+import { ProfilePage } from "./profilePage.js";
 
 
 
+/* ════════════════ AUTH ════════════════ */
+export async function login() {
 
-document.getElementById('login-btn').addEventListener('click', login);
+    const userInput = document.getElementById("username");
+    const passInput = document.getElementById("password");
 
+    const user = userInput.value.trim();
+    const pass = passInput.value;
 
-async function login() {
-    const identifier = document.getElementById('identifier').value;
-    const password = document.getElementById('password').value;
-    const errorMsg = document.getElementById('error-msg');
-    const credentials = btoa(identifier + ':' + password);
-    const response = await fetch('https://learn.zone01oujda.ma/api/auth/signin', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Basic ${credentials}`
-        },
-
-    });
-    if (!response.ok) {
-        console.error('Error:', error);
-        errorMsg.textContent = 'An error occurred. Please try again later';
-        errorMsg.style.display = 'block';
+    if (!user || !pass) {
+        showError("Please fill in all fields.");
         return;
     }
-    const jwt = await response.json();
-    localStorage.setItem('jwt', jwt);
-    errorMsg.textContent = 'login successful';
-    errorMsg.style.display = 'block';
-    errorMsg.style.color = 'green';
-    console.log(jwt);
-    const playload = jwt.split('.')[1];
-    const decodedPlayload = JSON.parse(atob(playload));
-    fetchProfile();
-    console.log(decodedPlayload);
-
-}
-
-
-
-async function fetchProfile() {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-        console.error('No JWT found. Please log in first.');
-        return;
-    }
-    const playload = jwt.split('.')[1];
-    const decodedPlayload = JSON.parse(atob(playload));
-    const userId = decodedPlayload['https://hasura.io/jwt/claims']['x-hasura-user-id'];
-
-    const query = `{
-    transaction(where: {
-      userId: { _eq: ${userId} },
-      type:   { _eq: "xp" }
-    }) {
-      id
-      amount
-      createdAt
-      path
-      object { name type }
-    }
-  }`;
-    const response = await fetch('https://learn.zone01oujda.ma/api/graphql-engine/v1/graphql', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`
-        },
-        body: JSON.stringify({ query })
-    });
-    if (!response.ok) {
-        console.error('Error:', error);
-        return;
-    }
-    const profileData = await response.json();
-    const xp= profileData.data.transaction.reduce((total, transaction) => {
-        
-            return total + transaction.amount;
-        
-     
-    }, 0);
     
-    console.log(profileData);
-    console.log(xp);
+    const creds = btoa(`${user}:${pass}`);
+    
+    try {
+        
+        const res = await fetch("https://learn.zone01oujda.ma/api/auth/signin", {
+            method: "POST",
+            headers: {
+                Authorization: `Basic ${creds}`
+            }
+        });
+        
+        if (!res.ok) {
+            console.log(res);
+            showError("Invalid credentials. Please try again.");
+            return;
+        }
+        
+        const data = await res.json();
+        
+        // token may be string or object
+        const token =
+            typeof data === "string"
+                ? data
+                : data.token || data;
+
+        localStorage.setItem("jwt", token);
+
+        ProfilePage()
+        console.log("hi");
+        
+        // load profile
+       loadProfile();
+
+    } catch (error) {
+
+        console.error(error);
+
+        showError("Network error. Please try again.");
+    }
 }
+
+/* ════════════════ EVENTS ════════════════ */
+// document.addEventListener("DOMContentLoaded", () => {
+
+    
+
+// });
