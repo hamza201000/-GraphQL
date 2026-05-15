@@ -6,9 +6,7 @@ export function formatXP(bytes) {
   }
 }
 
-export function Skills(skills) {
-    console.log("jawd zaml",skills);
-    
+export function Skills(skills) {    
     const skillsType = {};
     const svgNS = "http://www.w3.org/2000/svg";
     const skillsChart = document.getElementById("chart-skils");

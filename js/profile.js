@@ -14,8 +14,6 @@ export async function gql(query) {
     });
     const json = await res.json();
     if (json.errors) throw new Error(json.errors[0].message);
-    console.log('this issssss the data-------------------------', json.data);
-
     return json.data;
 }
 
@@ -48,7 +46,6 @@ export async function loadProfile() {
             `);
 
         const user = userData.user[0];
-        console.log(user);
         //2. XP transactions (only div-01 path, type xp)
         const xpData = await gql(`{
      transaction_aggregate(
@@ -59,35 +56,22 @@ export async function loadProfile() {
     }`);
 
 
-        // 3. Audit data
         const auditData = await gql(`{
       user { auditRatio totalUp totalDown }
     }`);
-        // ── Process ──
-        console.log("tran", userData.skils);
         const transactions = userData.skils || [];
         const auditUser = auditData.user[0] || {};
         const results = user.failed.aggregate.count || [];
 
-        // Total XP
-        const totalXP = formatXP(xpData.transaction_aggregate.aggregate.sum.amount);
 
-        // Audit ratio
+
+        const totalXP = formatXP(xpData.transaction_aggregate.aggregate.sum.amount);
         const ratio = auditUser.auditRatio ? auditUser.auditRatio.toFixed(1) : '—';
 
-        // Pass / Fail
         const passed = user.success.aggregate.count;
         const failed = user.failed.aggregate.count;
 
-        // Top 10 projects by XP
-        // const projectMap = {};
-        // transactions.forEach(t => {
-        //     const name = t.object?.name || t.path.split('/').pop();
-        //     projectMap[name] = (projectMap[name] || 0) + t.amount;
-        // });
-        // const top10 = Object.entries(projectMap)
-        //     .sort((a, b) => b[1] - a[1])
-        //     .slice(0, 10);
+     
 
         const result = Object.values(
             transactions.reduce((acc, item) => {
@@ -103,8 +87,7 @@ export async function loadProfile() {
                 return acc;
             }, {})
         );
-
-        console.log(result);
+        console.log(result)
         Skills(result)
 
 
@@ -113,8 +96,6 @@ export async function loadProfile() {
         document.getElementById('c-login').textContent = user.login;
         document.getElementById('c-xp').textContent = totalXP;
         document.getElementById('c-audit').textContent = ratio;
-        // drawBarChart(top10);
-        // drawPieChart(passed, failed);
         drawPieChart(passed, failed)
         document.getElementById('loading').style.display = 'none';
         document.getElementById('content').style.display = 'block';

@@ -36,7 +36,6 @@ export function LoginPage() {
             console.error("Form #login-form not found");
             return;
         }
-        
         loginForm.addEventListener("submit", (event) => {
           event.preventDefault();
           console.log("in");
