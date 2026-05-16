@@ -2,7 +2,7 @@
 
 A personal profile dashboard built for the [Zone01 Oujda](https://learn.zone01oujda.ma) school platform. It queries your learning data through GraphQL and visualizes it with custom SVG charts — all rendered in the browser, no framework required.
 
-🔗 **Live Site:** [https://gilded-torrone-f6ce2e.netlify.app](https://gilded-torrone-f6ce2e.netlify.app/)
+🔗 **Live Site:** [https://hghomari.netlify.app/](https://hghomari.netlify.app/)
 
 ---
 
